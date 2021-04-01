@@ -78,13 +78,19 @@ jobs:
         # git ls-remote --heads -q | grep $(git rev-parse HEAD) | awk '{print $2}' | sed -e 's|refs/heads/||g' | sed -e 's|/|_|g'
         # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
         run: |
-          echo "DOCKER_TAG=$(echo $GITHUB_HEAD_REF | sed -e 's|refs/heads/||g' | sed -e 's|/|_|g')" >> $GITHUB_ENV
+          echo "DOCKER_TAG=$(echo $GITHUB_HEAD_REF | sed -e 's|refs/heads/||g' | sed -e 's|/|.|g')" >> $GITHUB_ENV
 
       # Not final
       - name: Use 'latest' as Docker tag
         if: github.ref == 'refs/heads/master'
         run: |
           echo "DOCKER_TAG=latest" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Login to GHCR
         uses: docker/login-action@v1
