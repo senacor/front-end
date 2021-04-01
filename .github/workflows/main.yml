@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: "4.x"
 
-      - run: npm install
+      - run: npm ci
 
       - name: Test image
         env:
