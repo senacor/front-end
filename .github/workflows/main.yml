@@ -1,16 +1,6 @@
 name: build
 
-on:
-  push:
-    branches:
-      - "*" # run for branches
-    tags:
-      - "*" # run for tags
-  pull_request:
-    branches:
-      - "*" # run for branches
-    tags:
-      - "*" # run for tags
+on: push
 
 env:
   GROUP: weaveworksdemos
@@ -74,11 +64,9 @@ jobs:
       # - run: npm install
 
       - name: Use branch name as Docker image tag
-        if: env.GITHUB_HEAD_REF != 'master'
-        # git ls-remote --heads -q | grep $(git rev-parse HEAD) | awk '{print $2}' | sed -e 's|refs/heads/||g' | sed -e 's|/|_|g'
-        # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
+        if: startsWith(github.ref, 'refs/heads')
         run: |
-          echo "DOCKER_TAG=$(echo $GITHUB_HEAD_REF | sed -e 's|refs/heads/||g' | sed -e 's|/|.|g')" >> $GITHUB_ENV
+          echo "DOCKER_TAG=$(echo ${{ github.ref }} | sed -e "s|refs/heads/||g" | sed -e "s|/|.|g")" >> $GITHUB_ENV
 
       # Not final
       - name: Use 'latest' as Docker tag
